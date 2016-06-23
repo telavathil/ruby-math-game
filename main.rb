@@ -1,6 +1,7 @@
 require './data.rb'
 require './methods.rb'
 require 'pry'
+require 'colorize'
 
 # controls the game continuation
 @replay = true
@@ -14,10 +15,10 @@ require 'pry'
 puts 'Welcome to ruby_math_game. Each player has three lives.....'
 puts
 
-print 'Player 1 name: '
+print 'Player 1 name: '.colorize(:blue)
 p1 = @players[0][:name] = gets.chomp
 
-print 'Player 2 name: '
+print 'Player 2 name: '.colorize(:blue)
 p2 = @players[1][:name] = gets.chomp
 
 puts 'Ok, lets begin. Good Luck.'
@@ -39,19 +40,19 @@ while @replay
     user_input = gets.chomp.to_i
 
     if @turn == 0 && is_correct?(user_input)
-        puts 'That is correct'
+        puts 'That is correct'.on_blue.underline
         score(@players[0])
         @turn += 1
     elsif @turn == 0 && !is_correct?(user_input)
-        puts 'Sorry, that is incorrect you will lose a life.'
+        puts 'Sorry, that is incorrect you will lose a life.'.on_blue.underline
         lose_life(@players[0])
         @turn += 1
     elsif @turn == 1 && is_correct?(user_input)
-        puts 'That is correct'
+        puts 'That is correct'.on_blue.underline
         score(@players[1])
         @turn -= 1
     elsif @turn == 1 && !is_correct?(user_input)
-        puts 'Sorry, that is incorrect you will lose a life.'
+        puts 'Sorry, that is incorrect you will lose a life.'.on_blue.underline
         lose_life(@players[1])
         @turn -= 1
     end
@@ -74,11 +75,11 @@ while @replay
 
 
     next unless is_alive?(@players[0]) || is_alive?(@players[1]) #|| @continue
-    puts 'Game Over.'
+    puts 'Game Over.'.colorize(:red)
     if @players[0][:lives] < 1
-        puts "The winner is #{p2} with #{@players[1][:score]} points"
+        puts "The winner is #{p2} with #{@players[1][:score]} points".colorize(:blue)
     elsif @players[1][:lives] < 1
-        puts "The winner is #{p1} #{@players[0][:score]} points,"
+        puts "The winner is #{p1} #{@players[0][:score]} points,".colorize(:blue)
     end
 
     @replay = false
