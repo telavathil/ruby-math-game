@@ -1,5 +1,5 @@
-require './data.rb'
-require './methods.rb'
+require './Player.rb'
+require './Question.rb'
 require 'pry'
 require 'colorize'
 
@@ -16,50 +16,61 @@ puts 'Welcome to ruby_math_game. Each player has three lives.....'
 puts
 
 print 'Player 1 name: '.colorize(:blue)
-p1 = @players[0][:name] = gets.chomp
+name1 = gets.chomp
 
 print 'Player 2 name: '.colorize(:blue)
-p2 = @players[1][:name] = gets.chomp
+name2 = gets.chomp
+
+#create players
+p1 = Player.new({name: name1,
+score: 0,
+answers_wrong: 0,
+lives: 3 })
+
+p2 = Player.new({name: name2,
+score: 0,
+answers_wrong: 0,
+lives: 3 })
 
 puts 'Ok, lets begin. Good Luck.'
 puts
 
 while @replay
     # create question
-    generate_question
+    q = Question.new()
 
     # determine turn
     case @turn
     when 0
-        print "#{p1}: "
+        print "#{p1.name}: "
     else
-        print "#{p2}: "
+        print "#{p2.name}: "
     end
-
-    print question_string
+    #binding.pry
+    print q.q_str
     user_input = gets.chomp.to_i
 
-    if @turn == 0 && is_correct?(user_input)
+    if @turn == 0 && q.is_correct?(user_input)
         puts 'That is correct'.on_blue.underline
-        score(@players[0])
+        p1.score += 1
         @turn += 1
-    elsif @turn == 0 && !is_correct?(user_input)
+    elsif @turn == 0 && !q.is_correct?(user_input)
         puts 'Sorry, that is incorrect you will lose a life.'.on_blue.underline
-        lose_life(@players[0])
+        p1.lives -= 1
         @turn += 1
-    elsif @turn == 1 && is_correct?(user_input)
+    elsif @turn == 1 && q.is_correct?(user_input)
         puts 'That is correct'.on_blue.underline
-        score(@players[1])
+        p2.score += 1
         @turn -= 1
-    elsif @turn == 1 && !is_correct?(user_input)
+    elsif @turn == 1 && !q.is_correct?(user_input)
         puts 'Sorry, that is incorrect you will lose a life.'.on_blue.underline
-        lose_life(@players[1])
+        p2.lives -= 1
         @turn -= 1
     end
 
     puts "The score is:"
-    puts "    #{p1}: has #{@players[0][:score]} points, and #{@players[0][:lives]} lives remaining"
-    puts "    #{p2}: has #{@players[1][:score]} points, and #{@players[1][:lives]} lives remaining"
+    puts "    #{p1.name}: has #{p1.score} points, and #{p1.lives} lives remaining"
+    puts "    #{p2.name}: has #{p2.score} points, and #{p2.lives} lives remaining"
     puts
 
     #binding.pry
@@ -74,12 +85,12 @@ while @replay
     # end
 
 
-    next unless is_alive?(@players[0]) || is_alive?(@players[1]) #|| @continue
+    next unless p1.lives < 1 || p2.lives < 1 #|| @continue
     puts 'Game Over.'.colorize(:red)
-    if @players[0][:lives] < 1
-        puts "The winner is #{p2} with #{@players[1][:score]} points".colorize(:blue)
-    elsif @players[1][:lives] < 1
-        puts "The winner is #{p1} #{@players[0][:score]} points,".colorize(:blue)
+    if p1.lives < 1
+        puts "The winner is #{p2.name} with #{p2.score} points".colorize(:blue)
+    elsif p2.lives < 1
+        puts "The winner is #{p1.name} #{p2.score} points,".colorize(:blue)
     end
 
     @replay = false
